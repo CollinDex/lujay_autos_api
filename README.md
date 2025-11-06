@@ -80,7 +80,7 @@ Open your browser and navigate to `http://localhost:8080` to verify that the app
 
 ## API Endpoints
 
-All API endpoints can be referenced in the [API Reference](API_REFERENCE.md) document.
+All API endpoints can be referenced in the swagger doc at: http://localhost:8000/api/docs/#/
 
 ## Versioning
 
