@@ -29,11 +29,11 @@ app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get("/", (req: Request, res: Response) => {
   res.send({
-    message: "I am the express API responding for Job Listing Platform",
+    message: "I am the express API responding for Lujay Autos",
   });
 });
 app.get("/api/v1", (req: Request, res: Response) => {
-  res.json({ message: "I am the express API responding for Job Listing Platform" });
+  res.json({ message: "I am the express API responding for Lujay Autos" });
 });
 
 app.use("/api/v1", authRoute);

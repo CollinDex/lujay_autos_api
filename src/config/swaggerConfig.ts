@@ -5,9 +5,9 @@ import { version } from "../../package.json";
 const swaggerDefinition: SwaggerDefinition = {
   openapi: "3.1.0",
   info: {
-    title: "Express Template",
+    title: "Lujay Autos",
     version: version,
-    description: "OpenApi documentaiton for the Express Template",
+    description: "OpenApi documentaiton for Lujays Autos backend API",
   },
   servers: [
     {
@@ -15,7 +15,7 @@ const swaggerDefinition: SwaggerDefinition = {
       description: "Local server",
     },
     {
-      url: "https://express-template-production.up.railway.app/",
+      url: "https://lujays-autos-production.up.railway.app/",
       description: "Live server",
     },
   ],

@@ -9,7 +9,7 @@ dotenv.config();
 
 const port = config.port;
 
-// Initialize MongoDB Data Source and Start Server
+
 initializeMongoDataSource()
   .then(() => {
     app.listen(port, () => {
@@ -18,5 +18,5 @@ initializeMongoDataSource()
   })
   .catch((error) => {
     log.error("Error initializing MongoDB connection:", error);
-    process.exit(1); // Exit the process if MongoDB connection fails
+    process.exit(1);
   });
