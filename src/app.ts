@@ -3,7 +3,7 @@ import express, { Express, Request, Response } from "express";
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./config/swaggerConfig";
 import { errorHandler, routeNotFound } from "./middleware";
-import { authRoute } from "./routes";
+import { authRoute, vehicleRoute } from "./routes";
 import { Limiter } from "./utils";
 
 
@@ -38,6 +38,7 @@ app.get("/api/v1", (req: Request, res: Response) => {
 });
 
 app.use("/api/v1", authRoute);
+app.use("/api/v1", vehicleRoute);
 
 app.use(errorHandler);
 app.use(routeNotFound);

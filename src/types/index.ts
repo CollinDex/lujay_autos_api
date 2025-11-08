@@ -5,11 +5,6 @@ export enum UserRole {
     ADMIN = "admin"
 }
   
-export enum NotificationsStatus {
-    UNREAD = "unread",
-    READ = "read"
-}
-
 export interface Base {
     createdAt: Date;
     updatedAt: Date;
@@ -17,7 +12,7 @@ export interface Base {
 }
 
 export interface IUser extends Base {
-    _id: string;
+    _id: Types.ObjectId;
     username: string;
     password: string;
     email: string;
@@ -40,3 +35,19 @@ export interface JwtPayload {
     user_id: string;
     role?: UserRole;
 }
+
+export interface IVehicle extends Base {
+    _id: Types.ObjectId;
+    make: string;
+    model: string;
+    year: number;
+    price: number;
+    posterId: Types.ObjectId;
+    quantity: number;
+    media?: {
+        url: string;
+        type: string;
+        publicId: string;
+        index: number;
+    }[];
+};

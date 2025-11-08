@@ -24,6 +24,10 @@ const swaggerDefinition: SwaggerDefinition = {
       name: "Authentication",
       description: "A list of routes for Authentication",
     },
+    {
+      name: "Vehicles",
+      description: "A list of routes for the Vehicle Listing",
+    },
   ],
   components: {
     securitySchemes: {
