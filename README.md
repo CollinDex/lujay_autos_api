@@ -10,7 +10,7 @@ The **Lujay_Autos_Api** is a RESTful Api built in NodeJs(Express) that handles t
   - Retrieve all vehicle listings or a single vehicle by ID.
   - Update vehicle listings with partial updates, filtering out undefined fields.
   - Delete vehicle listings with ownership check (users can only delete their own vehicles).
-- **Media Upload:** Upload images of vehicles to Cloudinary (up to 6 files per listing).
+- **Media Upload:** Upload images and videos of vehicles to Cloudinary (up to 6 files per listing).
 - **Role-Based Authorization:** (Admin && User) 
   - Admins are authorized to create and manage vehicle listings.
   - Admin are authorized to update and delete only vehicle lsitings that belong to him.
@@ -30,6 +30,8 @@ The **Lujay_Autos_Api** is a RESTful Api built in NodeJs(Express) that handles t
   - MongoDB with Mongoose
   - JWT for authentication
   - Zod for input validation
+  - Multer for File Processing
+  - Cloudinary for Cloud Storage
 
 ## Getting Started
 
