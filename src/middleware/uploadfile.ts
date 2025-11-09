@@ -1,86 +1,94 @@
-import { Request, Response, NextFunction } from "express";
 import multer, { FileFilterCallback } from "multer";
 import path from "path";
 import fs from "fs";
-import { BadRequest } from "./error";
-import log from "../utils/logger";
-import config from "../config";
+import { Request } from "express";
 
-// Ensure upload directory exists
-const uploadDir = "uploads/";
+// Create uploads directory if it doesn't exist
+const uploadDir = path.join(__dirname, "../../../uploads");
 if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir); // Create the directory if it doesn't exist
+    fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// Configure multer to use diskStorage to keep the original filename
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir); // Specify the directory for storing files
-  },
-  filename: (req, file, cb) => {
-    // Extract file extension from original filename
-    const ext = path.extname(file.originalname);
-    const baseName = path.basename(file.originalname, ext);
-    
-    // Add timestamp to filename to avoid overwriting
-    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
-    const newFilename = `${baseName}-${uniqueSuffix}${ext}`;
-    
-    cb(null, newFilename); // Save file with unique name
-  }
-});
-
-// Configure multer for file uploads with fileFilter and limits
-const upload = multer({
-  storage: storage,
-  fileFilter: (req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
+// Configure file filter
+const fileFilter = (
+    req: Request,
+    file: Express.Multer.File,
+    cb: FileFilterCallback,
+) => {
+    // Allow only images and specific file types
     const allowedMimeTypes = [
-      "application/pdf",
-      "text/plain",
-      "application/msword",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+        "image/svg+xml",
+        "image/heic",
+        "image/heif",
+        "image/hevc",
+        "video/mp4",
+        "video/mov",
+        "video/avi",
+        "video/wmv",
+        "video/flv",
+        "video/mpeg",
+        "video/mpg",
+        "video/m4v",
+        "video/webm",
+        "video/ogg",
+        "video/webm",
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ];
 
     if (allowedMimeTypes.includes(file.mimetype)) {
-      cb(null, true);
+        cb(null, true);
     } else {
-      cb(new BadRequest("Invalid file type. Only PDF, text, and Word documents are allowed."));
+        cb(
+            new Error(
+                `Invalid file type. Only images, Videos PDFs, and Word documents are allowed.`,
+            ),
+        );
     }
-  },
-  limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB size limit
-  },
+};
+
+const upload = multer({
+    fileFilter: fileFilter,
+    limits: {
+        fileSize: 50 * 1024 * 1024,
+        files: 6,
+    },
 });
 
-// Middleware to handle file uploads
-export function uploadFile(req: Request, res: Response, next: NextFunction) {
-
-  const uploadSingle = upload.single("resume");
-
-  uploadSingle(req, res, function (err) {
+const handleMulterError = (err: any, req: Request, res: any, next: any) => {
     if (err instanceof multer.MulterError) {
-      return next(new BadRequest(`File upload failed: ${err.message}`));
-    } else if (err?.message === "Unexpected end of form") {
-      return next(new BadRequest(`No file Uploaded`));
-    } else if (err) {
-      return next(new BadRequest(`An unknown error occurred during the upload: ${err.message}`));
+        if (err.code === "LIMIT_FILE_SIZE") {
+            return res.status(400).json({
+                success: false,
+                message: "File size too large. Maximum size is 50MB.",
+            });
+        }
+        if (err.code === "LIMIT_FILE_COUNT") {
+            return res.status(400).json({
+                success: false,
+                message: "Too many files. Maximum 6 files allowed.",
+            });
+        }
+        return res.status(400).json({
+            success: false,
+            message: err.message,
+        });
     }
 
-    if (!req.file) {
-      return next(new BadRequest("No file uploaded"));
+    if (err) {
+        return res.status(400).json({
+            success: false,
+            message: err.message,
+        });
     }
 
-    log.info(`File Upload Succesful: ${req.file.filename}`);
     next();
-  });
-}
-
-export function deleteFile(path: string): Promise<void> {
-  log.info(`File Deleted: ${path}`);
-  return new Promise((resolve, reject) => {
-    fs.unlink(path, (err) => {
-      if (err) reject(err);
-      else resolve();
-    });
-  });
 };
+
+export { upload, handleMulterError };
