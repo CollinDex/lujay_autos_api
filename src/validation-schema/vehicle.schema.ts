@@ -34,8 +34,4 @@ const updateVehicleSchema = z.object({
         .optional(),
 });
 
-
 export { createVehicleSchema, getVehicleByIdSchema, updateVehicleSchema };
-
-
-//TODO: Add validation for posterID

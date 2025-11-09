@@ -3,6 +3,7 @@ import { VehicleService } from "../services";
 import { sendJsonResponse } from "../utils/send-response";
 import mongoose from "mongoose";
 import { IVehicle } from "../types";
+import { InvalidInput } from "../middleware";
 
 export const vehicleService = new VehicleService();
 
@@ -57,4 +58,23 @@ const getVehicleById = async (req: Request, res: Response, next: NextFunction) =
     }
 };
 
-export { createVehicle, getAllVehicles, getVehicleById, updateVehicle, deleteVehicle };
+const uploadMedia = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const id = req.params.id;
+        const media = req.files as Express.Multer.File[];
+        
+        if (!media || media.length === 0) {
+            throw new InvalidInput("You must upload at least 1 media file");
+        }
+        if (media.length > 6) {
+            throw new InvalidInput("Maximum of 6 media files allowed");
+        }
+
+        const { vehicle, message } = await vehicleService.uploadMedia({id, media});
+        sendJsonResponse(res, 201, message, {vehicle});
+    } catch (error) {
+        next (error);
+    }
+};
+
+export { createVehicle, getAllVehicles, getVehicleById, updateVehicle, deleteVehicle, uploadMedia };
