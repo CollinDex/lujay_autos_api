@@ -409,3 +409,109 @@ export const deleteVehicleDoc = `
  */
 `;
 
+
+export const uploadVehicleMediaDoc = `
+/**
+ * @swagger
+ * /api/v1/vehicles/{id}/images:
+ *   post:
+ *     summary: Upload media files for a vehicle
+ *     description: Upload one or more media files (images, videos) for a vehicle listing. Files are uploaded to Cloudinary.
+ *     tags:
+ *       - Vehicles
+ *     security:
+ *       - bearerAuth: []
+ *     consumes:
+ *       - multipart/form-data
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: 6738d09e3f5d23a12b4cfa00
+ *         description: Vehicle ID to upload media for
+ *       - in: formData
+ *         name: media
+ *         type: array
+ *         items:
+ *           type: string
+ *           format: binary
+ *         required: true
+ *         description: Media files to upload (max 6 files, each max 50MB)
+ *     responses:
+ *       201:
+ *         description: Media uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 status_code:
+ *                   type: number
+ *                   example: 201
+ *                 message:
+ *                   type: string
+ *                   example: Media uploaded successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     vehicles:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                             example: 6738d09e3f5d23a12b4cfa00
+ *                           make:
+ *                             type: string
+ *                             example: Toyota
+ *                           model:
+ *                             type: string
+ *                             example: Corolla
+ *                           year:
+ *                             type: number
+ *                             example: 2020
+ *                           price:
+ *                             type: number
+ *                             example: 15000
+ *                           quantity:
+ *                             type: number
+ *                             example: 3
+ *                           posterId:
+ *                             type: string
+ *                             example: 6738d09e3f5d23a12b4cfa00
+ *                           media:
+ *                             type: array
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 url:
+ *                                   type: string
+ *                                   example: https://res.cloudinary.com/demo/image/upload/sample1.jpg
+ *                                 type:
+ *                                   type: string
+ *                                   example: image/jpeg
+ *                                 publicId:
+ *                                   type: string
+ *                                   example: sample1
+ *                                 index:
+ *                                   type: number
+ *                                   example: 1
+ *       400:
+ *         description: Bad request (e.g., file too large, invalid file type, too many files)
+ *       401:
+ *         description: Unauthorized — user must be logged in
+ *       403:
+ *         description: Forbidden — user does not have permission to upload media
+ *       422:
+ *         description: Invalid input — no files uploaded
+ *       500:
+ *         description: Internal server error
+ */
+`;
+
