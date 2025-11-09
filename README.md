@@ -49,8 +49,8 @@ Before you begin, ensure you have the following installed on your machine:
 First, clone the repository to your local machine using Git.
 
 ```sh
-git clone https://github.com/your-username/[app-name].git
-cd [app-name]
+git clone https://github.com/CollinDex/lujay_autos_api.git
+cd [lujay_autos_api]
 ```
 
 ### 2. Install Dependencies
@@ -66,7 +66,15 @@ yarn
 Create a `.env` file in the root directory of the project and add your environment-specific variables. You can use the provided `.env.example` file as a reference.
 
 ```sh
-cp .env.example .env
+AUTH_EXPIRY=
+AUTH_SECRET=
+BASE_URL=
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+MONGO_URI=
+NODE_ENV=
+PORT=
 ```
 
 Edit the `.env` file to match your environment configuration.
@@ -105,4 +113,72 @@ all routes should have a prefix of
 
 ```bash
   api/v1
+```
+
+## Database Design
+
+```
+┌───────────────────┐
+│      Users        │
+├───────────────────┤
+│ _id : ObjectId    │
+│ name : string     │
+│ email : string    │ (unique, indexed)
+│ passwordHash: str │
+│ role: enum        │ ('admin'|'user')
+│ createdAt: ISODate│
+│ updatedAt: ISODate│
+└─────────┬─────────┘
+          │ 1:N
+          │
+          ▼
+┌─────────────────────────┐
+│       Vehicles          │
+├─────────────────────────┤
+│ _id : ObjectId          │
+│ ownerId : ObjectId ────┤ references Users(_id)
+│ title : string          │
+│ description : string    │
+│ price : number          │
+│ status : string         │ ('available'|'sold')
+│ createdAt: ISODate      │
+│ updatedAt: ISODate      │
+│ media: [                │ Embedded array of media
+│   {                     │
+│     url: string         │
+│     type: string        │ ('image','video','document')
+│     publicId: string    │
+│     index: number       │
+│   }                     │
+│ ]                       │
+└─────────┬───────────────┘
+          │ 1:N
+          │
+          ▼
+┌─────────────────────────┐
+│      Inspections        │
+├─────────────────────────┤
+│ _id : ObjectId          │
+│ vehicleId: ObjectId ────┤ references Vehicles(_id)
+│ inspectorId: ObjectId ──┤ references Users(_id)
+│ report: string          │
+│ rating: number          │
+│ inspectionDate: ISODate │
+│ createdAt: ISODate      │
+│ updatedAt: ISODate      │
+└─────────────────────────┘
+
+┌─────────────────────────┐
+│      Transactions       │
+├─────────────────────────┤
+│ _id : ObjectId          │
+│ vehicleId: ObjectId ────┤ references Vehicles(_id)
+│ buyerId: ObjectId ──────┤ references Users(_id)
+│ sellerId: ObjectId ─────┤ references Users(_id)
+│ amount: number          │
+│ status: string          │ ('pending','completed','cancelled')
+│ paymentMethod: string   │ ('bank_transfer','card','cash')
+│ createdAt: ISODate      │
+│ updatedAt: ISODate      │
+└─────────────────────────┘
 ```
